@@ -1,5 +1,5 @@
-Chronus
-=======
+Chronus v0.1.0
+==============
 
 Go library and command line tool to help with time parsing, formatting, and accuracy
 
