@@ -43,7 +43,6 @@ build:
 	@just _term-wipe
 	go build -o {{PROJECT_CLI}} ./cmd/{{PROJECT_CLI}}/main.go
 	mv {{PROJECT_CLI}} "${GOBIN}/"
-	@# go install ./cmd/{{PROJECT_CLI}}/main.go
 
 
 # Build distro
@@ -53,10 +52,23 @@ distro:
 	just archive
 
 
+install:
+	#!/bin/sh
+	# go install ./cmd/{{PROJECT_CLI}}/main.go
+	cd cmd/{{PROJECT_CLI}}
+	go install
+
+
 # Run code
-run +args='':
+run +args='"2021-03-08 16:06:34 MST"':
 	@just _term-wipe
-	go run ./cmd/{{PROJECT_CLI}}/main.go {{args}}
+	CHRONUS_COUNTRY_CODE="US" go run ./cmd/{{PROJECT_CLI}}/main.go {{args}}
+	@#hr; echo
+	@#go run ./cmd/{{PROJECT_CLI}}/main.go -country-code USA {{args}}
+	@#hr; echo
+	@#go run ./cmd/{{PROJECT_CLI}}/main.go {{args}}
+	@#hr; echo
+	@#go run ./cmd/{{PROJECT_CLI}}/main.go -h
 
 
 # Run a test
@@ -73,15 +85,18 @@ run +args='':
 
 
 _term-wipe:
-	#!/bin/sh
+	#!/usr/bin/env bash
+	set -exo pipefail
 	if [[ ${#VISUAL_STUDIO_CODE} -gt 0 ]]; then
 		clear
 	elif [[ ${KITTY_WINDOW_ID} -gt 0 ]] || [[ ${#TMUX} -gt 0 ]] || [[ "${TERM_PROGRAM}" = 'vscode' ]]; then
 		printf '\033c'
-	elif [[ "$(uname)" == 'Darwin' ]] || [[ "${TERM_PROGRAM}" = 'Apple_Terminal' ]] || [[ "${TERM_PROGRAM}" = 'iTerm.app' ]]; then
+	elif [[ "${TERM_PROGRAM}" = 'Apple_Terminal' ]] || [[ "${TERM_PROGRAM}" = 'iTerm.app' ]]; then
 		osascript -e 'tell application "System Events" to keystroke "k" using command down'
 	elif [[ -x "$(which tput)" ]]; then
 		tput reset
+	elif [[ -x "$(which tcap)" ]]; then
+		tcap rs
 	elif [[ -x "$(which reset)" ]]; then
 		reset
 	else
