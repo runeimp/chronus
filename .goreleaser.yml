@@ -47,7 +47,7 @@ archives:
       # linux: Linux
       # netbsd: NetBSD
       # openbsd: OpenBSD
-      # chronus: GzipDate
+      # chronus: Chronus
       # windows: Windows
     wrap_in_directory: true
 nfpms:
